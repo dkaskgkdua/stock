@@ -2,28 +2,23 @@ package com.example.stock.service;
 
 import com.example.stock.domain.Stock;
 import com.example.stock.repository.StockRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
-public class StockService {
-    private final StockRepository stockRepository;
+public class PessimisticLockStockService {
+    private StockRepository stockRepository;
 
-    public StockService(StockRepository stockRepository) {
+    public PessimisticLockStockService(StockRepository stockRepository) {
         this.stockRepository = stockRepository;
     }
 
-//    @Transactional
-    public synchronized void decrease(Long id, Long quantity) {
-        Stock stock = stockRepository.findById(id).orElseThrow();
+    @Transactional
+    public void decrease(Long id, Long quantity) {
+        Stock stock = stockRepository.findByIdWithPessimisticLock(id);
 
         stock.decrease(quantity);
 
         stockRepository.saveAndFlush(stock);
-
     }
-
 }
