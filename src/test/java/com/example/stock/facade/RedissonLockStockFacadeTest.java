@@ -15,9 +15,9 @@ import java.util.concurrent.Executors;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class LettuceLockStockFacadeTest {
+public class RedissonLockStockFacadeTest {
     @Autowired
-    private LettuceLockStockFacade lettuceLockStockFacade;
+    private RedissonLockStockFacade redissonLockStockFacade;
 
     @Autowired
     private StockRepository stockRepository;
@@ -43,9 +43,7 @@ public class LettuceLockStockFacadeTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    lettuceLockStockFacade.decrease(1L, 1L);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    redissonLockStockFacade.decrease(1L, 1L);
                 } finally {
                     latch.countDown();
                 }
